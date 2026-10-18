@@ -1,5 +1,11 @@
 # Travel Backend
 
+Nama Anggota Kelompok 3:
+1. Netha Yuwira almaizani (24051214185)
+2. Muhammad Rafi Febrio (24051214196)
+3. Bintang Adhi Susanto (24051214197)
+4. Achmad Rafi Ilmal (24051215204)
+   
 REST API + database untuk aplikasi Flutter pemesanan travel (Malang–Surabaya, dll).
 **Self-hosted** — hanya Node.js + Express + SQLite. Tidak memakai Supabase, Firebase, atau BaaS lain.
 
@@ -95,33 +101,3 @@ Field `booking` sudah memuat semua yang dibutuhkan struk & tiket: `booking_code`
 Login ─▶ cari trip (GET /trips) ─▶ lihat kursi (GET /trips/:id/seats)
       ─▶ POST /bookings  ─▶ POST /bookings/:id/pay ─▶ struk (respons /pay) ─▶ Tiket Saya (GET /bookings)
 ```
-
-## Menyambungkan ke Flutter
-
-1. Tambahkan dependensi: `flutter pub add http`
-2. Salin `flutter_client/lib/services/api_service.dart` ke `lib/services/` proyek Anda.
-3. Contoh pemakaian:
-   ```dart
-   final user = await ApiService.instance.login(emailController.text, passwordController.text);
-   final trips = await ApiService.instance.searchTrips(
-       originCode: 'MLG', destinationCode: 'SBY', date: DateTime.now(), passengers: 1);
-   final booking = await ApiService.instance.createBooking(tripId: trips.first.id, seats: ['3']);
-   final paid = await ApiService.instance.pay(booking.id, 'ovo');
-   ```
-4. Alamat server diatur lewat `--dart-define`:
-   `flutter run --dart-define=API_BASE_URL=http://192.168.1.10:3000`
-   (emulator Android memakai `10.0.2.2` untuk menjangkau `localhost` komputer).
-5. Android 9+ memblokir HTTP polos. Untuk development tambahkan
-   `android:usesCleartextTraffic="true"` di `<application>` pada `AndroidManifest.xml`;
-   untuk production gunakan HTTPS.
-
-## Catatan penting sebelum production
-
-- **Pembayaran masih simulasi**: `/pay` langsung menandai lunas. Untuk uang sungguhan, sambungkan
-  payment gateway (mis. Midtrans/Xendit) dan ubah menjadi: buat transaksi → tunggu webhook → tandai `paid`.
-  Itu layanan pembayaran, bukan BaaS, jadi tidak melanggar aturan Anda.
-- Isi `JWT_SECRET` yang kuat, pasang HTTPS (reverse proxy Nginx/Caddy), dan set `CORS_ORIGINS`.
-- Harga seed masih sama untuk semua rute (mengikuti angka di UI). Ubah di tabel `schedules`.
-- SQLite cukup untuk satu server. Jika nanti butuh banyak server, pindahkan ke PostgreSQL/MySQL
-  (query di `src/services.js` memakai SQL standar sehingga porting-nya sederhana).
-- Fitur belum ada: login Google/Facebook, "Lupa password", refresh token, panel admin.
